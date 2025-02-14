@@ -31,7 +31,6 @@ public class MyHashMap {
         int index = key.hashCode() % map.length;
         NodeMap current = map[index];
 
-        // Check if key already exists and update its value
         while (current != null) {
             if (current.getKey().equals(key)) {
                 current.setValue(value);
@@ -39,7 +38,12 @@ public class MyHashMap {
             }
             current = current.getNext();
         }
+
+        NodeMap newNode = new NodeMap(key, value);
+        newNode.setNext(map[index]);
+        map[index] = newNode;
     }
+
 
     public void remove(Object key) {
         int index = key.hashCode() % map.length;
