@@ -1,62 +1,66 @@
 package org.example;
 
-public class MyHashMap {
-    private NodeMap[] map = new NodeMap[10];
+public class MyHashMap<K, V> {
+    private NodeMap<K, V>[] map = new NodeMap[10];  // Масив для збереження елементів
     private int size = 0;
 
+    // Повертає кількість елементів у мапі
     public int size() {
         return size;
     }
 
+    // Очищає мапу
     public void clear() {
-        map = new NodeMap[10];
+        map = new NodeMap[10];  // Очищаємо масив
         size = 0;
     }
 
-    public Object get(Object key) {
+    // Отримуємо значення за ключем
+    public V get(K key) {
         int index = key.hashCode() % map.length;
-        Object result = null;
-        NodeMap current = map[index];
+        NodeMap<K, V> current = map[index];
         while (current != null) {
             if (current.getKey().equals(key)) {
-                result = current.getValue();
-                break;
+                return current.getValue();  // Повертаємо значення, якщо ключ знайдено
             }
             current = current.getNext();
         }
-        return result;
+        return null;  // Якщо ключ не знайдений, повертаємо null
     }
 
-    public void put(Object key, Object value) {
+    // Додаємо пару ключ-значення
+    public void put(K key, V value) {
         int index = key.hashCode() % map.length;
-        NodeMap current = map[index];
+        NodeMap<K, V> current = map[index];
 
         while (current != null) {
             if (current.getKey().equals(key)) {
-                current.setValue(value);
+                current.setValue(value);  // Якщо ключ вже існує, оновлюємо значення
                 return;
             }
             current = current.getNext();
         }
 
-        NodeMap newNode = new NodeMap(key, value);
+        // Якщо ключа не знайдено, додаємо новий елемент в список за індексом
+        NodeMap<K, V> newNode = new NodeMap<>(key, value);
         newNode.setNext(map[index]);
-        map[index] = newNode;
+        map[index] = newNode;  // Новий елемент стає першим в списку
+        size++;
     }
 
-
-    public void remove(Object key) {
+    // Видаляємо пару за ключем
+    public void remove(K key) {
         int index = key.hashCode() % map.length;
-        NodeMap current = map[index];
-        NodeMap previous = null;
+        NodeMap<K, V> current = map[index];
+        NodeMap<K, V> previous = null;
 
         while (current != null) {
             if (current.getKey().equals(key)) {
                 if (previous == null) {
-                    // Removing the first node in the linked list
+                    // Видаляємо перший елемент у списку
                     map[index] = current.getNext();
                 } else {
-                    // Removing a node from the middle or end
+                    // Видаляємо елемент всередині або в кінці списку
                     previous.setNext(current.getNext());
                 }
                 size--;
@@ -67,37 +71,38 @@ public class MyHashMap {
         }
     }
 
-    class NodeMap {
-        private Object value;
-        private Object key;
-        private NodeMap next;
+    // Внутрішній клас для збереження пар ключ-значення в списку
+    static class NodeMap<K, V> {
+        private K key;
+        private V value;
+        private NodeMap<K, V> next;
 
-        public NodeMap(Object key, Object value) {
+        public NodeMap(K key, V value) {
             this.key = key;
             this.value = value;
         }
 
-        public Object getValue() {
-            return value;
-        }
-
-        public void setValue(Object value) {
-            this.value = value;
-        }
-
-        public Object getKey() {
+        public K getKey() {
             return key;
         }
 
-        public void setKey(Object key) {
+        public void setKey(K key) {
             this.key = key;
         }
 
-        public NodeMap getNext() {
+        public V getValue() {
+            return value;
+        }
+
+        public void setValue(V value) {
+            this.value = value;
+        }
+
+        public NodeMap<K, V> getNext() {
             return next;
         }
 
-        public void setNext(NodeMap next) {
+        public void setNext(NodeMap<K, V> next) {
             this.next = next;
         }
     }

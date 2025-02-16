@@ -1,25 +1,25 @@
 package org.example;
 
-import java.util.Objects;
-
-public class MyLinkedList {
-    private Node first;
-    private Node last;
+public class MyLinkedList<T> {
+    private Node<T> first;
+    private Node<T> last;
     private int size = 0;
 
-    public void add(Object value) {
-        if (size == 0) {
-            Node current = new Node(value);
-            first = current;
-            last = current;
-        } else {
-            Node current = new Node(value);
-            current.setPrevious(last);
-            last.setNext(current);
-            last = current;
-        }
-        size++;
+    Object[] elements = new Object[16];  // Початковий розмір масиву 16
 
+    public void add(T value) {
+        if (size == elements.length) {
+            resize();
+        }
+        elements[size] = value;
+        size++;
+    }
+
+    private void resize() {
+        int newCapacity = elements.length * 2;  // Подвоюємо розмір масиву
+        Object[] newElements = new Object[newCapacity];
+        System.arraycopy(elements, 0, newElements, 0, elements.length);
+        elements = newElements;
     }
 
     public int size() {
@@ -32,58 +32,51 @@ public class MyLinkedList {
         size = 0;
     }
 
-    public void remove(int index) {
-        Node current = first;
-        for (int i = 0; i < index; i++) {
-            current = first.getNext();
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < size; i++) {
+            sb.append(elements[i]);
+            if (i < size - 1) {
+                sb.append(", ");
+            }
         }
-        if (current.getPrevious() == null) {
-            first = current.getNext();
-            current.getNext().setPrevious(null);
+        sb.append("]");
+        return sb.toString();
+    }
 
-        } else if (current.getNext() == null) {
-            last = current.getPrevious();
-            current.getPrevious().setNext(null);
-        } else {
-            current.getPrevious().setNext(current.getNext());
-            current.getNext().setPrevious(current.getPrevious());
 
+    class Node<T> {
+        private Object value;
+        private Node<T> previous;
+        private Node<T> next;
+
+        public Node(Object value) {
+            this.value = value;
         }
-            size++;
-    }
 
-}
+        public Object getValue() {
+            return value;
+        }
 
-class Node {
-    private Object value;
-    private Node previous;
-    private Node next;
+        public void setValue(Object value) {
+            this.value = value;
+        }
 
-    public Node(Object value) {
-        this.value = value;
-    }
+        public Node<T> getPrevious() {
+            return previous;
+        }
 
-    public Object getValue() {
-        return value;
-    }
+        public void setPrevious(Node<T> previous) {
+            this.previous = previous;
+        }
 
-    public void setValue(Object value) {
-        this.value = value;
-    }
+        public Node<T> getNext() {
+            return next;
+        }
 
-    public Node getPrevious() {
-        return previous;
-    }
-
-    public void setPrevious(Node previous) {
-        this.previous = previous;
-    }
-
-    public Node getNext() {
-        return next;
-    }
-
-    public void setNext(Node next) {
-        this.next = next;
+        public void setNext(Node<T> next) {
+            this.next = next;
+        }
     }
 }
